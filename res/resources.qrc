@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/">
         <file>Icon_64.png</file>
-        <file>Icon_16.png</file>
-        <file>NeuronIcon.ico</file>
     </qresource>
 </RCC>
