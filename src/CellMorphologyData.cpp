@@ -1,7 +1,7 @@
 #include "CellMorphologyData.h"
 #include "Application.h"
 
-#include "Util/Icon.h"
+#include <util/Icon.h>
 
 #include <util/Serialization.h>
 
