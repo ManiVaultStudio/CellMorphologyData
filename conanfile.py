@@ -72,6 +72,8 @@ class CellMorphologyDataConan(ConanFile):
             branch_info = PluginBranchInfo(self.__get_git_path())
             print(f"Core requirement {branch_info.core_requirement}")
             self.requires(branch_info.core_requirement)
+            # Destroy the __gitpath to remove it from the conan_export
+            pathlib.Path(self.export_folder, "__gitpath.txt").unlink(True)
 
     def configure(self):
         pass
