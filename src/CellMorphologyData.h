@@ -86,13 +86,6 @@ public:
 
     void setData(const std::vector<CellMorphology>& cellMorphologies);
 
-    /**
-     * Get set icon
-     * @param color Icon color for flat (font) icons
-     * @return Icon
-     */
-    QIcon getIcon(const QColor& color = Qt::black) const override;
-
 public: // Selection
 
     /**
@@ -158,15 +151,10 @@ class CellMorphologyDataFactory : public mv::plugin::RawDataFactory
             FILE  "CellMorphologyData.json")
 
 public:
-    CellMorphologyDataFactory() {}
+    CellMorphologyDataFactory() {
+        setIcon(QIcon(":/Icon_64.png"));
+    }
     ~CellMorphologyDataFactory() override {}
-
-    /**
-     * Get plugin icon
-     * @param color Icon color for flat (font) icons
-     * @return Icon
-     */
-    QIcon getIcon(const QColor& color = Qt::black) const override;
 
     mv::plugin::RawData* produce() override;
 };

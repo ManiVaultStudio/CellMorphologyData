@@ -311,11 +311,6 @@ void CellMorphologies::setData(const std::vector<CellMorphology>& cellMorphologi
     getRawData<CellMorphologyData>()->setData(cellMorphologies);
 }
 
-QIcon CellMorphologies::getIcon(const QColor& color /*= Qt::black*/) const
-{
-    return QIcon(":/Icon_64.png");
-}
-
 std::vector<std::uint32_t>& CellMorphologies::getSelectionIndices()
 {
     return _indices;
@@ -412,11 +407,6 @@ QVariantMap CellMorphologies::toVariantMap() const
     variantMap["Data"] = getRawData<CellMorphologyData>()->toVariantMap();
 
     return variantMap;
-}
-
-QIcon CellMorphologyDataFactory::getIcon(const QColor& color /*= Qt::black*/) const
-{
-    return QIcon(":/Icon_64.png");
 }
 
 plugin::RawData* CellMorphologyDataFactory::produce()
