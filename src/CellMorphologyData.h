@@ -151,9 +151,7 @@ class CellMorphologyDataFactory : public mv::plugin::RawDataFactory
             FILE  "CellMorphologyData.json")
 
 public:
-    CellMorphologyDataFactory() {
-        setIcon(QIcon(":/Icon_64.png"));
-    }
+    CellMorphologyDataFactory() {}
     ~CellMorphologyDataFactory() override {}
 
     mv::plugin::RawData* produce() override;

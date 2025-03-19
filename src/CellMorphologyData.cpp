@@ -281,6 +281,7 @@ QVariantMap CellMorphologyData::toVariantMap() const
 CellMorphologies::CellMorphologies(QString dataName, const QString& guid /*= ""*/) :
     DatasetImpl(dataName, true, guid)
 {
+    setIcon(mv::util::StyledIcon(QIcon(":/cell_morphology_data/Icon_64.png")));
 }
 
 CellMorphologies::~CellMorphologies()
