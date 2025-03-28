@@ -8,7 +8,8 @@ CellMorphology::CellMorphology() :
     somaPosition(0, 0, 0),
     centroid(0, 0, 0),
     minRange(std::numeric_limits<float>::max()),
-    maxRange(-std::numeric_limits<float>::max())
+    maxRange(-std::numeric_limits<float>::max()),
+    cellTypeColor(0.706f, 0.22f, 0.38f)
 {
 
 }

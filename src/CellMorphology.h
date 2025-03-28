@@ -29,6 +29,8 @@ public:
     mv::Vector3f minRange;
     mv::Vector3f maxRange;
 
+    mv::Vector3f cellTypeColor;
+
 private:
 
 };
