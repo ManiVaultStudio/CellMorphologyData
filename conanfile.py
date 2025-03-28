@@ -41,11 +41,16 @@ class CellMorphologyDataConan(ConanFile):
     }
 
     def __get_git_path(self):
-        path = load(
-            pathlib.Path(pathlib.Path(__file__).parent.resolve(), "__gitpath.txt")
-        )
-        print(f"git info from {path}")
-        return path
+        # When loaded as a dependency there is no mechanism 
+        # for determining the core version because the __gitpath.txt 
+        # was created for the top level requiree and does not exist on this path
+        if pathlib.Path(pathlib.Path(__file__).parent.resolve(), "__gitpath.txt").exists():
+            path = load(
+                pathlib.Path(pathlib.Path(__file__).parent.resolve(), "__gitpath.txt")
+            )
+            print(f"git info from {path}")
+            return path
+        return None
 
     def export(self):
         print("In export")
@@ -62,9 +67,11 @@ class CellMorphologyDataConan(ConanFile):
         # print(f"Got version: {self.version}")
 
     def requirements(self):
-        branch_info = PluginBranchInfo(self.__get_git_path())
-        print(f"Core requirement {branch_info.core_requirement}")
-        self.requires(branch_info.core_requirement)
+        if self.__get_git_path() is not None:
+            branch_info = PluginBranchInfo(self.__get_git_path())
+            print(f"Core requirement {branch_info.core_requirement}")
+            self.requires(branch_info.core_requirement)
+            pathlib.Path(pathlib.Path(__file__).parent.resolve(), "__gitpath.txt").unlink(True)
 
     def configure(self):
         pass
@@ -147,6 +154,9 @@ class CellMorphologyDataConan(ConanFile):
             ]
         )
         self.copy(pattern="*", src=package_dir)
+
+    def package_id(self):
+        self.info.requires.clear()
 
     def package_info(self):
         self.cpp_info.relwithdebinfo.libdirs = ["RelWithDebInfo/lib"]
