@@ -145,6 +145,7 @@ void CellMorphologyData::fromVariantMap(const QVariantMap& variantMap)
             const Vector3f centroid = Vector3f(cellMorphologyMap["CentroidX"].toFloat(), cellMorphologyMap["CentroidY"].toFloat(), cellMorphologyMap["CentroidZ"].toFloat());
             const Vector3f minRange = Vector3f(cellMorphologyMap["MinRangeX"].toFloat(), cellMorphologyMap["MinRangeY"].toFloat(), cellMorphologyMap["MinRangeZ"].toFloat());
             const Vector3f maxRange = Vector3f(cellMorphologyMap["MaxRangeX"].toFloat(), cellMorphologyMap["MaxRangeY"].toFloat(), cellMorphologyMap["MaxRangeZ"].toFloat());
+            const Vector3f cellTypeColor = Vector3f(cellMorphologyMap["CellTypeColorX"].toFloat(), cellMorphologyMap["CellTypeColorY"].toFloat(), cellMorphologyMap["CellTypeColorZ"].toFloat());
 
             cellMorphology.ids = std::vector<std::int32_t>(packedIds.begin() + idsOffset, packedIds.begin() + idsOffset + numberOfIds);
             cellMorphology.positions = std::vector<mv::Vector3f>(packedPositions.begin() + positionsOffset, packedPositions.begin() + positionsOffset + numberOfPositions);
@@ -156,6 +157,7 @@ void CellMorphologyData::fromVariantMap(const QVariantMap& variantMap)
             cellMorphology.centroid = centroid;
             cellMorphology.minRange = minRange;
             cellMorphology.maxRange = maxRange;
+            cellMorphology.cellTypeColor = cellTypeColor;
 
             std::vector<int> idMapKeys(numberOfIdMapKeys);
             std::vector<int> idMapValues(numberOfIdMapValues);
@@ -243,7 +245,10 @@ QVariantMap CellMorphologyData::toVariantMap() const
             { "MinRangeZ", QVariant::fromValue(cm.minRange.z) },
             { "MaxRangeX", QVariant::fromValue(cm.maxRange.x) },
             { "MaxRangeY", QVariant::fromValue(cm.maxRange.y) },
-            { "MaxRangeZ", QVariant::fromValue(cm.maxRange.z) }
+            { "MaxRangeZ", QVariant::fromValue(cm.maxRange.z) },
+            { "CellTypeColorX", QVariant::fromValue(cm.cellTypeColor.x) },
+            { "CellTypeColorY", QVariant::fromValue(cm.cellTypeColor.y) },
+            { "CellTypeColorZ", QVariant::fromValue(cm.cellTypeColor.z) }
         }));
     }
 
