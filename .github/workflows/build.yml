@@ -1,4 +1,4 @@
-name: ScatterplotPlugin
+name: CellMorphologyData
 
 on:
   push:
