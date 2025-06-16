@@ -10,6 +10,19 @@
 class CELLMORPHOLOGYDATA_EXPORT CellMorphology
 {
 public:
+    enum class Type
+    {
+        Undefined = 0,
+        Soma = 1,
+        Axon = 2,
+        BasalDendrite = 3,
+        ApicalDendrite = 4,
+        Custom = 5,
+        UnspecifiedNeurite = 6,
+        GliaProcesses = 7
+    };
+
+public:
     CellMorphology();
 
     void findCentroid();
