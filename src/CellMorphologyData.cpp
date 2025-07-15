@@ -143,8 +143,6 @@ void CellMorphologyData::fromVariantMap(const QVariantMap& variantMap)
 
             const Vector3f somaPosition = Vector3f(cellMorphologyMap["SomaPositionX"].toFloat(), cellMorphologyMap["SomaPositionY"].toFloat(), cellMorphologyMap["SomaPositionZ"].toFloat());
             const Vector3f centroid = Vector3f(cellMorphologyMap["CentroidX"].toFloat(), cellMorphologyMap["CentroidY"].toFloat(), cellMorphologyMap["CentroidZ"].toFloat());
-            const Vector3f minRange = Vector3f(cellMorphologyMap["MinRangeX"].toFloat(), cellMorphologyMap["MinRangeY"].toFloat(), cellMorphologyMap["MinRangeZ"].toFloat());
-            const Vector3f maxRange = Vector3f(cellMorphologyMap["MaxRangeX"].toFloat(), cellMorphologyMap["MaxRangeY"].toFloat(), cellMorphologyMap["MaxRangeZ"].toFloat());
             const Vector3f cellTypeColor = Vector3f(cellMorphologyMap["CellTypeColorX"].toFloat(), cellMorphologyMap["CellTypeColorY"].toFloat(), cellMorphologyMap["CellTypeColorZ"].toFloat());
 
             cellMorphology.ids = std::vector<std::int32_t>(packedIds.begin() + idsOffset, packedIds.begin() + idsOffset + numberOfIds);
@@ -154,9 +152,18 @@ void CellMorphologyData::fromVariantMap(const QVariantMap& variantMap)
             cellMorphology.parents = std::vector<std::int32_t>(packedParents.begin() + parentsOffset, packedParents.begin() + parentsOffset + numberOfParents);
 
             cellMorphology.somaPosition = somaPosition;
+
+            QVariantMap extentsMap = cellMorphologyMap["Extents"].toMap();
+            for (auto it = extentsMap.begin(); it != extentsMap.end(); ++it)
+            {
+                int itype = it.key().toInt();
+                CellMorphology::Type type = CellMorphology::TypeFromInt(itype);
+                CellMorphology::Extent extent;
+                extent.fromVariantMap(it.value().toMap());
+                cellMorphology.extents[type] = extent;
+            }
+
             cellMorphology.centroid = centroid;
-            cellMorphology.minRange = minRange;
-            cellMorphology.maxRange = maxRange;
             cellMorphology.cellTypeColor = cellTypeColor;
 
             std::vector<int> idMapKeys(numberOfIdMapKeys);
@@ -225,7 +232,14 @@ QVariantMap CellMorphologyData::toVariantMap() const
 
     cms.reserve(_cellMorphologies.size());
 
-    for (const CellMorphology& cm : _cellMorphologies) {
+    for (const CellMorphology& cm : _cellMorphologies)
+    {
+        QVariantMap extentMap;
+        for (auto it = cm.extents.begin(); it != cm.extents.end(); ++it) {
+            QString key = QString::number(static_cast<int>(it.key()));
+            extentMap[key] = it.value().toVariantMap();
+        }
+
         cms.push_back(QVariantMap({
             { "NumberOfIds", QVariant::fromValue(cm.ids.size()) },
             { "NumberOfPositions", QVariant::fromValue(cm.positions.size()) },
@@ -240,12 +254,7 @@ QVariantMap CellMorphologyData::toVariantMap() const
             { "CentroidX", QVariant::fromValue(cm.centroid.x) },
             { "CentroidY", QVariant::fromValue(cm.centroid.y) },
             { "CentroidZ", QVariant::fromValue(cm.centroid.z) },
-            { "MinRangeX", QVariant::fromValue(cm.minRange.x) },
-            { "MinRangeY", QVariant::fromValue(cm.minRange.y) },
-            { "MinRangeZ", QVariant::fromValue(cm.minRange.z) },
-            { "MaxRangeX", QVariant::fromValue(cm.maxRange.x) },
-            { "MaxRangeY", QVariant::fromValue(cm.maxRange.y) },
-            { "MaxRangeZ", QVariant::fromValue(cm.maxRange.z) },
+            { "Extents", extentMap },
             { "CellTypeColorX", QVariant::fromValue(cm.cellTypeColor.x) },
             { "CellTypeColorY", QVariant::fromValue(cm.cellTypeColor.y) },
             { "CellTypeColorZ", QVariant::fromValue(cm.cellTypeColor.z) }

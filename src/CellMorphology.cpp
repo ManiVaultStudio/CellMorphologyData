@@ -7,8 +7,6 @@ using namespace mv;
 CellMorphology::CellMorphology() :
     somaPosition(0, 0, 0),
     centroid(0, 0, 0),
-    minRange(std::numeric_limits<float>::max()),
-    maxRange(-std::numeric_limits<float>::max()),
     cellTypeColor(0.706f, 0.22f, 0.38f)
 {
 
@@ -25,16 +23,30 @@ void CellMorphology::findCentroid()
 void CellMorphology::findExtents()
 {
     // Find cell position extents
-    minRange = Vector3f(std::numeric_limits<float>::max());
-    maxRange = Vector3f(-std::numeric_limits<float>::max());
-    for (const auto& pos : positions)
+    for (int i = 0; i < positions.size(); i++)
     {
-        if (pos.x < minRange.x) minRange.x = pos.x;
-        if (pos.y < minRange.y) minRange.y = pos.y;
-        if (pos.z < minRange.z) minRange.z = pos.z;
-        if (pos.x > maxRange.x) maxRange.x = pos.x;
-        if (pos.y > maxRange.y) maxRange.y = pos.y;
-        if (pos.z > maxRange.z) maxRange.z = pos.z;
+        Type type = TypeFromInt(types[i]);
+
+        bool newlyCreated = !extents.contains(type);
+        Extent& extent = extents[type];
+        if (newlyCreated)
+        {
+            extent.emin = Vector3f(std::numeric_limits<float>::max());
+            extent.emax = Vector3f(-std::numeric_limits<float>::max());
+        }
+        
+        const auto& pos = positions[i];
+        if (pos.x < extent.emin.x) extent.emin.x = pos.x;
+        if (pos.y < extent.emin.y) extent.emin.y = pos.y;
+        if (pos.z < extent.emin.z) extent.emin.z = pos.z;
+        if (pos.x > extent.emax.x) extent.emax.x = pos.x;
+        if (pos.y > extent.emax.y) extent.emax.y = pos.y;
+        if (pos.z > extent.emax.z) extent.emax.z = pos.z;
+    }
+
+    for (auto it = extents.begin(); it != extents.end(); ++it)
+    {
+        it.value().center = (it.value().emin + it.value().emax) / 2;
     }
 }
 
@@ -48,16 +60,39 @@ void CellMorphology::center()
         pos -= centroid;
 }
 
-void CellMorphology::rescale()
+//void CellMorphology::rescale()
+//{
+//    // Find cell position extents
+//    findExtents();
+//
+//    Vector3f range = (maxRange - minRange);
+//    float maxRange = std::max(std::max(range.x, range.y), range.z);
+//    // Rescale positions
+//    for (auto& pos : positions)
+//        pos /= maxRange;
+//
+//    //std::cout << minV.str() << " " << maxV.str() << std::endl;
+//}
+
+void CellMorphology::Extent::Extend(CellMorphology::Extent extent)
 {
-    // Find cell position extents
-    findExtents();
+    emin = min(emin, extent.emin);
+    emax = max(emax, extent.emax);
+    center = (emin + emax) / 2;
+}
 
-    Vector3f range = (maxRange - minRange);
-    float maxRange = std::max(std::max(range.x, range.y), range.z);
-    // Rescale positions
-    for (auto& pos : positions)
-        pos /= maxRange;
+QVariantMap CellMorphology::Extent::toVariantMap() const
+{
+    QVariantMap map;
+    map["min"] = emin.toVariantMap();
+    map["max"] = emax.toVariantMap();
+    map["center"] = center.toVariantMap();
+    return map;
+}
 
-    //std::cout << minV.str() << " " << maxV.str() << std::endl;
+void CellMorphology::Extent::fromVariantMap(const QVariantMap& map)
+{
+    emin.fromVariantMap(map["min"].toMap());
+    emax.fromVariantMap(map["max"].toMap());
+    center.fromVariantMap(map["center"].toMap());
 }
