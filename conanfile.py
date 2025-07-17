@@ -5,8 +5,6 @@ import os
 import pathlib
 import subprocess
 from rules_support import PluginBranchInfo
-from conans import tools
-import shutil
 
 class CellMorphologyDataConan(ConanFile):
     """Class to package plugin using conan
