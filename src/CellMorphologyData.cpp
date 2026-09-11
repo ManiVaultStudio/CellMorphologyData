@@ -91,13 +91,13 @@ void CellMorphologyData::fromVariantMap(const QVariantMap& variantMap)
     packedIdMapValues.resize(dataMap["NumberOfIdMapValues"].toInt());
 
     // Convert raw data to original vectors
-    populateDataBufferFromVariantMap(dataMap["IdsRawData"].toMap(), (char*)packedIds.data());
-    populateDataBufferFromVariantMap(dataMap["PositionsRawData"].toMap(), (char*)packedPositions.data());
-    populateDataBufferFromVariantMap(dataMap["TypesRawData"].toMap(), (char*)packedTypes.data());
-    populateDataBufferFromVariantMap(dataMap["RadiiRawData"].toMap(), (char*)packedRadii.data());
-    populateDataBufferFromVariantMap(dataMap["ParentsRawData"].toMap(), (char*)packedParents.data());
-    populateDataBufferFromVariantMap(dataMap["IdMapKeysRawData"].toMap(), (char*)packedIdMapKeys.data());
-    populateDataBufferFromVariantMap(dataMap["IdMapValuesRawData"].toMap(), (char*)packedIdMapValues.data());
+    populateBytesFromBlobMap(dataMap["IdsRawData"].toMap(), (char*)packedIds.data(), packedIds.size() * sizeof(int32_t));
+    populateBytesFromBlobMap(dataMap["PositionsRawData"].toMap(), (char*)packedPositions.data(), packedPositions.size() * sizeof(mv::Vector3f));
+    populateBytesFromBlobMap(dataMap["TypesRawData"].toMap(), (char*)packedTypes.data(), packedTypes.size() * sizeof(int32_t));
+    populateBytesFromBlobMap(dataMap["RadiiRawData"].toMap(), (char*)packedRadii.data(), packedRadii.size() * sizeof(float));
+    populateBytesFromBlobMap(dataMap["ParentsRawData"].toMap(), (char*)packedParents.data(), packedParents.size() * sizeof(int32_t));
+    populateBytesFromBlobMap(dataMap["IdMapKeysRawData"].toMap(), (char*)packedIdMapKeys.data(), packedIdMapKeys.size() * sizeof(int32_t));
+    populateBytesFromBlobMap(dataMap["IdMapValuesRawData"].toMap(), (char*)packedIdMapValues.data(), packedIdMapValues.size() * sizeof(int32_t));
 
     if (dataMap.contains("CellMorphologyRawData"))
     {
@@ -109,7 +109,7 @@ void CellMorphologyData::fromVariantMap(const QVariantMap& variantMap)
 
         byteArray.resize(cellMorphologyRawDataSize);
 
-        populateDataBufferFromVariantMap(dataMap["CellMorphologyRawData"].toMap(), (char*)byteArray.data());
+        populateBytesFromBlobMap(dataMap["CellMorphologyRawData"].toMap(), (char*)byteArray.data(), byteArray.size() * sizeof(char));
 
         QVariantList cms;
 
@@ -220,13 +220,13 @@ QVariantMap CellMorphologyData::toVariantMap() const
         idMapValues.insert(idMapValues.end(), values.begin(), values.end());
     }
 
-    QVariantMap idsRawData = rawDataToVariantMap((char*)ids.data(), ids.size() * sizeof(int32_t), true);
-    QVariantMap positionsRawData = rawDataToVariantMap((char*)positions.data(), positions.size() * sizeof(mv::Vector3f), true);
-    QVariantMap typesRawData = rawDataToVariantMap((char*)types.data(), types.size() * sizeof(int32_t), true);
-    QVariantMap radiiRawData = rawDataToVariantMap((char*)radii.data(), radii.size() * sizeof(float), true);
-    QVariantMap parentsRawData = rawDataToVariantMap((char*)parents.data(), parents.size() * sizeof(int32_t), true);
-    QVariantMap idMapKeysRawData = rawDataToVariantMap((char*)idMapKeys.data(), idMapKeys.size() * sizeof(int32_t), true);
-    QVariantMap idMapValuesRawData = rawDataToVariantMap((char*)idMapValues.data(), idMapValues.size() * sizeof(int32_t), true);
+    QVariantMap idsRawData = bytesToBlobVariantMap((char*)ids.data(), ids.size() * sizeof(int32_t));
+    QVariantMap positionsRawData = bytesToBlobVariantMap((char*)positions.data(), positions.size() * sizeof(mv::Vector3f));
+    QVariantMap typesRawData = bytesToBlobVariantMap((char*)types.data(), types.size() * sizeof(int32_t));
+    QVariantMap radiiRawData = bytesToBlobVariantMap((char*)radii.data(), radii.size() * sizeof(float));
+    QVariantMap parentsRawData = bytesToBlobVariantMap((char*)parents.data(), parents.size() * sizeof(int32_t));
+    QVariantMap idMapKeysRawData = bytesToBlobVariantMap((char*)idMapKeys.data(), idMapKeys.size() * sizeof(int32_t));
+    QVariantMap idMapValuesRawData = bytesToBlobVariantMap((char*)idMapValues.data(), idMapValues.size() * sizeof(int32_t));
 
     QVariantList cms;
 
@@ -267,7 +267,7 @@ QVariantMap CellMorphologyData::toVariantMap() const
 
     clustersDataStream << cms;
 
-    QVariantMap cmsRawData = rawDataToVariantMap((char*)byteArray.data(), byteArray.size(), true);
+    QVariantMap cmsRawData = bytesToBlobVariantMap((char*)byteArray.data(), byteArray.size());
 
     variantMap.insert({
         { "CellIds", QVariant::fromValue(cellIds) },

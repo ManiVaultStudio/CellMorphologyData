@@ -113,6 +113,8 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         --prefix ${ManiVault_INSTALL_DIR}/$<CONFIGURATION>
 )
 
+#mv_handle_plugin_config(${PROJECT_NAME})
+
 # -----------------------------------------------------------------------------
 # Miscellaneous
 # -----------------------------------------------------------------------------
